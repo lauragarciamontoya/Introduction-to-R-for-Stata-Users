@@ -11,7 +11,50 @@ library(margins)
 library(AER)
 library(stargazer) #Cool package to format regression output
 
+fahrenheit_to_celsius <- function(temp_F){
+  temp_C <- ((temp_F - 32) * (5 / 9)) 
+  return(temp_C)
+}
 
+fahrenheit_to_kelvin <- function(temp_F){
+  temp_K <-(temp_F - 32) * (5 / 9) + 273.15 
+  return(temp_K)
+}
+
+celsiustokevin <- function(temp_C){
+  temp_K <- temp_C - 273.15
+  return(temp_K)
+}
+
+
+fahrenheit_to_celsius(40)
+fahrenheit_to_kelvin(40)
+celsiustokevin(40)
+
+#Or with vectors:
+temperatures_F<-c(42,40,35,34,39,34,35)
+
+fahrenheit_to_celsius(temperatures_F)
+
+##Confidence Intervals
+confidence_z<-function(estimate,alpha,se)
+{
+  lower_bound<-estimate-se*qnorm(1-(alpha/2))
+  upper_bound<-estimate+se*qnorm(1-(alpha/2))
+  return(c(lower_bound, upper_bound))
+}
+
+
+confidence_n<-function(estimate,conf_level,n,se){
+  if (n>30) {
+    lower_bound<-estimate-se*qnorm(conf_level)
+    upper_bound<-estimate+se*qnorm(conf_level)
+  } else if (n<=30) {
+    lower_bound<-estimate-se*qt(conf_level,n-1)
+    upper_bound<-estimate+se*qt(conf_level,n-1)
+  }
+  return(c(lower_bound,upper_bound))
+}
 
 
 #########################################################################
