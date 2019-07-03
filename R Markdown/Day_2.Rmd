@@ -1,0 +1,906 @@
+---
+title: "Introduction R for Stata Users"
+subtitle: "Day 2"
+author: "Laura Garcia Montoya"
+date: "6/26/2019"
+output: pdf_document
+fontsize: 13pt
+---
+
+#1. Writing Functions in R
+
+``In programming, you use functions to incorporate sets of instructions that you want to use repeatedly or that, because of their complexity, are better self-contained in a sub program and called when needed. A function is a piece of code written to carry out a specified task; it can or can not accept arguments or parameters and it can or can not return one or more values.''
+
+Yesterday, we learned that functions are an important part of using R. By learning how to create simple functions in R you will have more tools to understand the documentation of different R functions and packages.
+
+
+### Example
+
+Let’s say we want to build a function that converts temperatures from Fahrenheit to Celsius.If we were to do this by hand, we need to make sure we understand the process required to convert temperatures from Fahrenheit to Celsius. In particular, we need to know that\footnote{This example is from DataCarpentry: \url{https://swcarpentry.github.io/r-novice-inflammation/02-func-R/}:
+
+$T(C) = (T(F) - 32) *  \frac{5}{9}$
+
+Before we start trying this in R, we need to make sure we know the answers to the following questions: 
+
+\begin{itemize}
+\item What do we want our function to do? 
+
+We want our function to take temperatures measured in Fahrenheit, apply the formula,and return a value in Celsius.
+
+\item What is the input - Domain?
+
+A temperature measured in Fahrenheit. 
+
+\item What is the output - Codomain? 
+
+The equivalent temperature measured in celsius. 
+
+\end{itemize}
+
+
+## 1.1 Structure of Functions in R: 
+
+
+1) We need to decide what the name of our function will be. Let's say $fahrenheit\_to\_celsius$ Then, we need to tell R that $fahrenheit\_to\_celsius$ is an object of the type function. 
+
+```{r, eval=FALSE}
+fahrenheit_to_celsius <- function() {
+  
+}
+```
+
+2) We need to declare the name of the input. We will use $temp\_F$ to refer to the input. Inputs go inside the parenthesis after function.
+
+```{r, eval=FALSE}
+fahrenheit_to_celsius <- function(temp_F){
+}
+```
+
+3) We will also need to name the output of the function. Let's use $temp\_C$ for this example. 
+
+```{r, eval=FALSE}
+fahrenheit_to_celsius <- function(temp_F) {
+  temp_C <-  
+}
+```
+
+4) We are now ready to write the function using the input, output and process. 
+
+```{r, eval=TRUE}
+fahrenheit_to_celsius <- function(temp_F) {
+  temp_C <- ((temp_F - 32) * (5 / 9)) 
+}
+```
+
+5) Finally, we need to specify what we want the function to return. (Not necessary if only one output, but a good practice to when we write functions iwth more than one outcome)
+
+```{r, eval=TRUE}
+fahrenheit_to_celsius <- function(temp_F){
+  temp_C <- ((temp_F - 32) * (5 / 9)) 
+  return(temp_C)
+}
+```
+
+What if instead of Celsius we wanted Kelvin? 
+
+```{r, eval=TRUE}
+fahrenheit_to_kelvin <- function(temp_F){
+  temp_K <-(temp_F - 32) * (5 / 9) + 273.15 
+  return(temp_K)
+}
+```
+
+Alternatively, we can also call a function inside a function. A composite function: 
+
+```{r, eval=TRUE}
+celsiustokevin <- function(temp_C){
+  temp_K <- temp_C - 273.15
+  return(temp_K)
+}
+```
+
+Now, we are ready to use our functions: 
+Either with single values: 
+
+```{r}
+fahrenheit_to_celsius(40)
+fahrenheit_to_kelvin(40)
+celsiustokevin(40)
+```
+
+Or with vectors:
+```{r, results=TRUE}
+temperatures_F<-c(42,40,35,34,39,34,35)
+
+fahrenheit_to_celsius(temperatures_F)
+
+```
+
+##1.2. Confidence Intervals
+
+``In statistics, a confidence interval (CI) is a type of interval estimate, computed from the statistics of the observed data, that might contain the true value of an unknown population parameter. The interval has an associated confidence level that, loosely speaking, quantifies the level of confidence that the parameter lies in the interval. More strictly speaking, the confidence level represents the frequency (i.e. the proportion) of possible confidence intervals that contain the true value of the unknown population parameter. In other words, if confidence intervals are constructed using a given confidence level from an infinite number of independent sample statistics, the proportion of those intervals that contain the true value of the parameter will be equal to the confidence level.'' (Wikipedia)
+
+Let's construct our own function that calculates the bounds of a confidence interval for a given estimate. 
+ 
+```{r}
+confidence_z<-function(estimate,alpha,se)
+  {
+    lower_bound<-estimate-se*qnorm(1-(alpha/2))
+    upper_bound<-estimate+se*qnorm(1-(alpha/2))
+    return(c(lower_bound, upper_bound))
+}
+```
+
+###Practice:
+
+1. Calculate 95% confidence intervals (alpha=0.05) for the following: 
+\begin{itemize}
+\item Mean 12, variance 5, sample size 150
+\item Mean 12, variance 5, sample size 1500
+\item Mean 12, standard deviation 5, sample size 1500
+\end{itemize}
+
+```{r, results=TRUE}
+#Answer 1
+confidence_z(12,0.05,sqrt(5/150))
+
+```
+
+2. Calculate 90% confidence intervals for the following:
+
+\begin{itemize}
+\item Mean 12, variance 5, sample size 150
+\item Mean 12, variance 5, sample size 1500
+\item Mean 12, standard deviation 5, sample size 1500
+\end{itemize}
+
+```{r, eval=FALSE}
+#Answer 1
+confidence_z()
+```
+
+3. Complete the code below to create a function that calculates a confidence interval using the t distribution. Use the function qt() to get the value from the t distribution. Note 1: for this you will need to input the degrees of freedom too. Note 2: $df=n-1$
+
+```{r, eval=FALSE}
+confidence_t<-function(estimate,conf_level,n,se){
+  lower_bound<-
+  upper_bound<-
+  return(c(lower_bound,upper_bound))
+}
+```
+
+4. Analyze the code below and make sure you understand this function.
+
+```{r}
+confidence_n<-function(estimate,conf_level,n,se){
+  if (n>30) {
+  lower_bound<-estimate-se*qnorm(conf_level)
+  upper_bound<-estimate+se*qnorm(conf_level)
+} else if (n<=30) {
+  lower_bound<-estimate-se*qt(conf_level,n-1)
+  upper_bound<-estimate+se*qt(conf_level,n-1)
+}
+  return(c(lower_bound,upper_bound))
+}
+
+```
+
+
+5. Calculate 95% confidence intervals for the following: 
+
+\begin{itemize}
+\item Mean 12, $SE=5$, sample size 15
+\item Mean 12, $SE=3$, sample size 15
+\item Mean 12, $SE=5$, sample size 35
+\end{itemize}
+
+```{r, eval=FALSE}
+confidence(12,0.05,15,5)
+```
+
+\newpage
+
+#2. Back to Data Frames and descriptive statistics
+
+##Importing the Data Set
+
+1. Download and save the dataset "Data_example_Class.xlsx". 
+KEY: pay attention to where you saved the file. 
+2. Check your working directory.
+```{r}
+getwd()
+```
+
+3. If necessary, change your working directory to the folder where your saved "Data_example_Class.xlsx"
+
+```{r}
+setwd("/Users/lauragarciamontoya/Box Sync/PhD/R Workshop/R for Stata Users Workshop/")
+```
+
+4. Import the dataset "Data_example_Class.xlsx" using code. You will need package "readxl". Make sure you install it first. 
+
+```{r, results=TRUE}
+library(readxl) #install package if necessary
+data_example<- read_excel("Data_example_class.xls")
+```
+
+## Summarizing the dataset:
+
+The function summary() will return descriptive statistics of the object you input. 
+
+If the object is a data frame it will return these for all of the variables. You can also use the function for a list of variables or just one variable. 
+
+```{r,results="hide"}
+summary(data_example)
+summary(data_example[,2:3])
+summary(data_example$aSETERCUATBAMAZS)
+```
+
+## Names and Heads: 
+These two functions are useful to explore what the data set contains: 
+- head() returns the first 6 rows of the dataset
+- names() returns the names of the variables. 
+
+```{r, results="hide"}
+head(data_example)
+names(data_example)
+```
+
+### Note on renaming variables:
+Some datasets, like the one we are using, have hard variable names that are hard to interpret. There is an easy way to label those. 
+
+Let's try rename two variables:
+```{r}
+names(data_example)[names(data_example) == 'aSIPOVGINI'] <- 'Gini_coef'
+
+names(data_example)[names(data_example) == 'aNYGDPMKTPKD'] <- 'GDP_constant'
+```
+
+## Simple funtions to describe data
+Mean and median: 
+```{r}
+mean_x<-mean(c(6,2,3,9,10))
+median_x<-median(c(6,2,3,9,10))
+```
+
+Let's estimate the mean and median of the Gini Coefficient and GDP in constant US dollars from our data set.
+```{r,results="TRUE"}
+mean(data_example$Gini_coef, na.rm=TRUE) #Add "na.rm=TRUE" if variable has missing values. 
+
+mean(data_example$GDP_constant, na.rm=TRUE) 
+
+median(data_example$Gini_coef, na.rm=TRUE) 
+
+median(data_example$GDP_constant, na.rm=TRUE) 
+```
+
+Or the variance and standard deviation: 
+```{r,results="hide"}
+#Variance of Gini Coefficient
+var(data_example$Gini_coef, na.rm=TRUE) 
+#Standard Deviation of Gini Coefficient
+sd(data_example$Gini_coef, na.rm=TRUE)
+```
+
+Other useful functions: Minimum, Maximum and range. 
+```{r,results="TRUE"}
+min(data_example$Gini_coef, na.rm=TRUE)
+
+max(data_example$Gini_coef, na.rm=TRUE)
+
+range(data_example$Gini_coef, na.rm = TRUE)
+```
+
+## Combining indexing with descriptive statistics: 
+We can use indexing to calculate more detailed descriptive statistics. 
+
+```{r,results="TRUE"}
+#Mean gini coefficient for the year 2004.
+mean(data_example$Gini_coef[data_example$year==2004], na.rm = TRUE)
+
+#Mean gini coefficient for country Colombia.
+mean(data_example$Gini_coef[data_example$CountryName=="Colombia"], na.rm=TRUE)
+```
+
+Or to test logical statements: 
+```{r,results="TRUE"}
+mean(data_example$Gini_coef[data_example$year==2004], na.rm = TRUE) > mean(data_example$Gini_coef[data_example$year==2000], na.rm = TRUE)
+```
+
+###Creating variables
+
+We will use all of these skills to create a new variable to measure if a country is above or below the mean on: Educational attainment, at least completed upper secondary, population 25+, total (%) (cumulative) relatively educated. (varname: aSESECCUATUPZS)
+
+```{r}
+data_example$above_educ_mean<-data_example$aSESECCUATUPZS>mean(data_example$aSESECCUATUPZS, na.rm = TRUE)
+
+summary(data_example$above_educ_mean)
+```
+
+
+##Function aggregate
+
+The function aggregate() is useful if you want to have descriptive statistics that are more detailed. Look at the documentation of this function. (hint: type ?aggregate) (Similar to summarise in tidyverse)
+
+\color{blue} Similar lo collapse in Stata \color{black}
+
+```{r, results="hide"}
+means_vector<-aggregate(data_example$Gini_coef, list(data_example$year), mean, na.rm=TRUE)
+
+sd_vector<-aggregate(data_example$Gini_coef, list(data_example$year), sd, na.rm=TRUE)
+
+min_vector<-aggregate(data_example$Gini_coef, list(data_example$year), min, na.rm=TRUE)
+
+max_vector<-aggregate(data_example$Gini_coef, list(data_example$year), max, na.rm=TRUE)
+
+#Combines vectors 
+des_all<-cbind(year=means_vector[,1],mean_gini=means_vector[,2],
+               sd_gini=sd_vector[,2],min_gini=min_vector[,2],max_gini=max_vector[,2])
+               
+```
+
+###Practice: 
+1. Interpret the code above and the resulting table.  
+
+2. Use the code above to generate an equivalent table but for the variable GDP.
+
+3. Creating new variable:
+
+Repeat what we did above with variable aSESECCUATUPZS. This time instead of creating a dummy variable, create a variable that takes values 1,2,3,4 depending on the quartile. It will take the values: 
+  1 if observation falls on first quartile (percetiles (0-25]). 
+  2 if it falls between (25,50].
+  3 if it belongs to the third quartile (50,75] and 
+  4 if it belong to the fourth quartile (75,100]. 
+  
+There are multiple ways to do this! (hint: quantile(data, c(0.25, 0.5, 0.75), type = 1), summary(), ifelse() might help you). 
+
+4. What is the mode of the variable that you created above? 
+
+5. Check which year has a higher Gini_coef in the United States: 2000 or 2004? 
+
+\newpage
+
+
+#3. Intro to plots in Basic R: 
+(See Cheat sheet: "BaseGraphicsCheatsheet.pdf")
+
+Example using boxplot
+```{r, results="TRUE"}
+boxplot(data_example$Gini_coef)
+
+boxplot(data_example$aSECOMDURS)
+
+boxplot(data_example$Gini_coef, data_example$aSECOMDURS)
+```
+
+
+##Histograms
+```{r histograms, fig.width=6, fig.height=5, fig.align='center', size=5}
+par(mfrow=c(2,2)) #Allows to have plots side by side
+#1
+hist(cars$speed) 
+
+#2
+hist(cars$speed, breaks=10) 
+
+#3
+hist(cars$speed, breaks=10 , xlab = "Speed", main = "Car Speed Distribution")
+
+#4
+hist(cars$speed, breaks=10 , xlab = "Speed", main = "Car Speed Distribution", col="lightblue")
+
+```
+
+
+##Scatter Plots
+```{r plots, fig.align='center', size=5, fig.width=6, fig.height=7}
+par(mfrow=c(2,2)) 
+
+plot(cars$speed~cars$dist,col="blue", xlab="Speed", ylab="Distance")
+
+plot(cars$speed,cars$dist,col="blue", xlab="Speed", ylab="Distance")
+lines(cars$dist~cars$speed, col="blue")
+
+plot(cars$speed,cars$dist,col="blue", xlab="Speed", ylab="Distance")
+lines(lowess(cars$dist~cars$speed), col="red")
+
+plot(cars$speed,cars$dist,col="black", xlab="Speed", ylab="Distance")
+lines(lowess(cars$dist~cars$speed), col="red")
+text(18,82, "This is ok", col="Dark Green", pos=3)
+text(8,17, "BEST", col="Blue", pos=3)
+text(24,119.5, "This is probably an outlier -> ", col="Dark red", pos=2)
+```
+
+##Distribution plots
+
+```{r}
+d_speed<-density(cars$speed)
+cars$treatment<-rbinom(50,1,0.4)
+d_speed_t<-density(cars$speed[cars$treatment==1])
+d_speed_c<-density(cars$speed[cars$treatment==0])
+par(mfrow=c(3,1)) 
+plot(d_speed , main="Kernel Density of Car Speed", xlab="Car Speed")
+polygon(d_speed, col="light blue", border="blue")
+plot(d_speed_t , main="Only Treated", xlab="Car Speed")
+polygon(d_speed_t, col="light green", border="dark green")
+plot(d_speed_c , main="Only Control", xlab="Car Speed")
+polygon(d_speed_c, col="light gray", border="dark gray")
+```
+
+\newpage
+
+#4. Ggplot2 
+Ggplot2 is a very useful package to graph things in R. It produces extremely cool graphs such as: 
+
+```{r, echo=FALSE}
+library(ggplot2)
+ggplot(mpg, aes(cty)) + geom_density(aes(fill=factor(cyl)), alpha=0.8) +     labs(title="Density plot", 
+         subtitle="City Mileage Grouped by Number of cylinders",
+         caption="Source: mpg",
+         x="City Mileage",
+         fill="# Cylinders")
+```
+
+And: 
+
+```{r, echo=FALSE}
+ggplot(diamonds, aes(carat, price, colour = color, shape = cut)) +
+  geom_point()+
+     labs(title="Price of Diamonds", 
+         subtitle="Grouped by cut and color",
+         x="Carats", y="Price")
+```
+
+
+I don't want to overwhelm you with all of the details behind the package ggplot2 and I don't expect you to understand everything that is going on. It’s hard to sumarize how ggplot2 works because it is complex. T
+
+##0. Download and open in R the script titled "R_script_ggplot2.R"
+This script has some code and comments that will help you go through this session. 
+
+##1. Install and Load package:
+The name of the package is ggplot2. The first thing we need to do is install and load the package.
+
+##2. The data:
+We will use a package called ``datasets'' that contains multiple datasets that we can use to produce plots. You will need to install and load package datasets. 
+```{r, echo=FALSE}
+install.packages('datasets',repos = "http://cran.us.r-project.org")
+library(datasets)
+library(help = "datasets") #Gives you an index with the datasets available
+```
+
+## 3. Main function Ggplot:
+
+The main function of the package ggplot2 is ggplot.
+
+Structure of the function: 
+
+```{r, eval=FALSE}
+ggplot( name of dataset,  aes  ( name variable x , name variable y, colour = smt, shape = smt)) + geom_something
+```
+
+\color{blue} name of dataset: \color{black} just type the name of the dataset that contains the variables you are interested in graphing.
+
+\color{green} aes() \color{black} aesthetic means the things you can see. Examples include:
+position (i.e., on the x and y axes), color, fill, shape, linetype, size. 
+
+\color{black} name of variable x: \color{black} name of the variable you want to display in x axxis. Note: this variable needs to exist: type names(nameofdataset) to get list of names 
+\color{black} name of variable y: \color{black} name of the variable you want to display in y axxis. 
+
+\color{red} colour: \color{black} Different coloring options. 
+
+\color{blue} geom_something: \color{black} Geometric objects are the actual marks we put on a plot. Common examples:
+points (geom_point, for scatter plots, dot plots, etc)
+lines (geom_line, for time series, trend lines, etc)
+boxplot (geom_boxplot, for, well, boxplots!)
+
+\textbf{Example 1 - the structure}
+```{r}
+ggplot(diamonds, aes(carat, price, colour = color, shape = cut)) +
+    geom_point()
+```
+
+
+\textbf{Example 2 - scatter plot}
+```{r}
+#Points
+ggplot(ChickWeight, aes(weight, Time, colour = Time)) + geom_point()
+```
+
+\textbf{Example 3 - Histogram}
+```{r}
+#Histogram
+names(ChickWeight)
+
+#Plot
+ggplot(ChickWeight, aes(weight)) + geom_histogram() 
+
+#Change colors
+ggplot(ChickWeight, aes(weight)) + geom_histogram(color="darkblue", fill="lightblue") 
+```
+
+\textbf{Example 4 - More on plots }
+```{r}
+names(USArrests)
+#Create plot
+ggplot(USArrests, aes(UrbanPop, Murder, colour="color")) + geom_point()  + geom_text(label=rownames(USArrests), size=3)
+
+#Change color and size
+ggplot(USArrests, aes(UrbanPop, Murder)) +
+geom_point(colour="blue", size=2) + geom_text(label=rownames(USArrests), color="black", size=3)
+
+```
+
+\textbf{Example 5 - Lines}
+```{r}
+ggplot(data=Orange,
+       aes(x=age, y=circumference, colour=Tree)) +
+       geom_line()
+```
+
+\textbf{Example 6 - Density functions}
+```{r}
+ggplot(diamonds, aes(carat, fill = cut)) +   geom_density(position = "stack")
+```
+
+
+###Practice
+Using the dataset "swiss", also in the package "datasets" do the followinf tasks: 
+1. Scatter plot: 
+ a. Plot two variables with default settings (hint: geom_point)
+  Sample code:
+  
+```{r, eval=FALSE}
+ggplot(swiss, aes(x=name_varx , y=name_vary)) + geom_something()
+```
+
+ b. Use options to modify either color or shape of points. 
+ 
+2. Histogram: 
+  a. Choose one variable and make an histogram with default settings.
+  b. Change both the fill and the lines of the histogram. 
+  
+3. Construct the following graphs using dataset ToothGrowth: on the effect of Vitamin C on Tooth Growth in Guinea Pigs. 
+  a. A scatter with variable 'dose' on the x axis and 'len' on the y axis. 
+  b. Color the points in the previuos plot blue. 
+  c. Color the points in the previous plot according to 'supp'
+  d. Make the points bigger by setting size to 2
+
+\newpage
+
+#5. Linear Regression
+
+##5.1 Basic structure:
+
+$$ y = \beta X + \epsilon $$
+Let's use the "mtcars" data set to contruct an example in which the mpg (miles per gallon) by a car is a function of horse power.
+
+$$ mpg = \beta_0 + \beta_1*horsepower + \epsilon $$
+
+
+```{r}
+linear_model1 <- lm(mpg ~ hp, data=mtcars)  # build linear regression model on full data
+print(linear_model1)
+```
+
+We can explore the estimated model with: 
+```{r}
+summary(linear_model1)
+```
+
+##5.2 Recovering objects from model
+
+Extracting Coefficients:
+```{r}
+#Names
+names(linear_model1)
+
+#Display coefficients
+linear_model1$coefficients
+
+#Creates object with coefficients
+coeficcients_m1<-linear_model1$coefficients
+coeficcients_m1
+
+#Just the intercept
+coeficcients_m1[1]
+
+#Just the hp coefficient
+coeficcients_m1[2]
+
+#Residuals 
+summary(linear_model1)[3]
+summary(linear_model1)$residuals
+
+#R2
+summary(linear_model1)$r.squared
+summary(linear_model1)$adj.r.squared
+
+```
+
+
+If you want more information from the model:
+```{r}
+#Display all estimates from model
+coef(summary(linear_model1))
+
+#Creates an object with all estimates from model
+coef_ds<-coef(summary(linear_model1)) #index this object as dataframe. 
+
+
+#Just the standard errors
+coef_se<-coef(summary(linear_model1))[,2] 
+coef_se
+```
+
+##5.3 Robust Standard errors
+To estimate robust standard errors you need to use the sandwich package and the lmtest package.
+```{r}
+library(lmtest) #Install package before.
+library(sandwich)  #Install package before.
+
+coeff_rse<-coeftest(linear_model1, vcov = vcovHC(linear_model1, type="HC1")) #This is already a coefficient ds object. Like the one we constructed above. HC1 is the equivalent to stata's.
+
+#The default type in R is HCW3
+coeff_rse[,2]
+```
+
+
+
+
+And we can use ggplot to graph our results: 
+```{r}
+library(cowplot)
+#Simple Scatter Plot
+p1<-ggplot(mtcars, aes(x=hp, y=mpg)) + geom_point()
+
+#Add linear model
+p2<-ggplot(mtcars, aes(x=hp, y=mpg)) + geom_point() +geom_smooth(method="lm", se=FALSE) #try adding se by changing to TRUE. 
+
+#Add linear model
+p3<-ggplot(mtcars, aes(x=hp, y=mpg)) + geom_point() +geom_smooth(method="lm", se=TRUE) 
+
+p4<-ggplot(mtcars, aes(x=hp, y=mpg)) + geom_point() +geom_smooth(method="lm", se=TRUE) + labs(title="Regression line", y="Miles per Gallon", x="Horse Power") 
+
+
+plot_grid(p1,p2,p3,p4)
+```
+
+Another way to do this with package "broom":
+```{r}
+library(dplyr)
+library(broom)
+
+mod1<-lm(mpg~disp, data=mtcars)
+print(mod1)
+summary(mod1)
+
+#And plot the fitted lines
+lm1_plota<-ggplot(augment(mod1), aes(x=disp, y=mpg))+geom_point()+geom_line(aes(y=.fitted), size=1) + theme_bw()
+  
+#Using the broom output, you can do something like this for confidence intervals: 
+lm1_plotb<-ggplot(augment(mod1), aes(x=disp, y=mpg)) + 
+  geom_ribbon(aes(ymin=.fitted-1.96*.se.fit, ymax=.fitted+1.96*.se.fit), alpha=0.2) +
+  geom_point(aes(colour = mpg)) + 
+  geom_line(aes(disp, .fitted, colour = .fitted)) +
+  theme_bw() +theme(legend.position = "none")
+
+plot_grid(lm1_plota, lm1_plotb)
+
+
+```
+
+
+Subsetting the data frame to estimate model: 
+```{r}
+library(stargazer) #Cool package to format regression output
+mod1_cyl6<-lm(mpg~disp, data=mtcars[mtcars$cyl==6,])
+print(mod1_cyl6)
+summary(mod1_cyl6)
+
+
+mod1_cyl8<-lm(mpg~disp, data=mtcars[mtcars$cyl==8,])
+print(mod1_cyl8)
+summary(mod1_cyl8)
+
+
+stargazer(mod1_cyl6,mod1_cyl8 )
+
+```
+
+And add interaction terms: 
+```{r}
+mtcars$am<-factor(mtcars$am)
+mtcars$am<-dplyr::recode(mtcars$am, "0"="Automatic", "1"="Manual")
+mod2<-lm(mpg~disp+am, data = mtcars)
+mod3<-lm(mpg~disp+am+disp:am, data = mtcars)
+
+#Plots
+lm3a<-ggplot(augment(mod2), aes(x=disp, y=mpg, color=am)) + 
+  geom_ribbon(aes(ymin=.fitted-1.96*.se.fit, ymax=.fitted+1.96*.se.fit), alpha=0.2, linetype=0) +
+  geom_point() + geom_line(aes(y=.fitted)) +
+  theme_bw() +theme(legend.position = "none") + annotate("text", x=300, y=30, label= "mpg = b0 + b1*Disp + b3*Autom + e")
+
+
+lm3b<-ggplot(augment(mod3), aes(x=disp, y=mpg, color=am)) + 
+  geom_ribbon(aes(ymin=.fitted-1.96*.se.fit, ymax=.fitted+1.96*.se.fit), alpha=0.2, linetype=0) +
+  geom_point() + geom_line(aes(y=.fitted)) + theme_bw() +theme(legend.position = "none") + annotate("text", x=300, y=30, label= "mpg = b0 + b1*D + b3*A + b4*D*A+ e")
+
+plot_combined<-plot_grid(lm3a, lm3b)
+ggsave("plot.png")
+```
+
+###Practice:
+
+1. Install and load the AER and foreign packages. Load the PSID1982 data to your R environment. Furthermore, save a copy of it in .dta format to your hard drive so you can open it in Stata also and compare commands.\footnote{Taken from: https://www.r-exercises.com/2018/03/05/basic-r-for-stata-users-exercises/}
+
+```{r}
+library(AER)
+data("PSID1982")
+names(PSID1982)
+```
+
+Export stata dataset
+```{r}
+
+```
+
+
+2. Now that the data is loaded in both R and Stata, print summary statistics equivalent to Stata‘s summarize, describe and list in 1/6.
+
+
+3. Fit the following linear model and print a summary of the estimated parameters:
+
+$$ln(wage) = \alpha + \beta_1education + \beta_2experience + \beta_3experience2 + \beta_4 female + u$$
+
+
+4. Add a dummy for African American and test whether the coefficients on the experience variables are jointly statistically significant from zero.
+
+
+5. Translate to R: twoway scatter lwage experience.
+
+
+6. Make a histogram of log(wages): hist lwage.
+
+
+7. drop south from your data (frame) object.
+
+
+8. Find the equivalent of mean(wage) if married == 1 & gender == 2, that is the mean wage for not married females.
+
+
+9. Make a two by two frequency table: tabulate occupation union.
+
+
+10. Estimate a logistic regression with married as an independent variable and education and experience as dependent variables. Estimate the marginal effect of an increase in education at the mean (margins, dydx(education) atmeans).
+```{r, results=TRUE}
+library(margins) #install package "margins" if necessary. 
+PSID1982$married_n<-ifelse(PSID1982$married=="yes",1,0)
+model_logit<-glm(married_n ~ education + experience , data=PSID1982)
+margins_logit<-margins(model_logit, atmeans=c(education))
+plot(margins_logit)
+```
+
+\newpage
+
+#6. Useful Translation from Stata to R
+
+
+1. Drop: Example - Drop observations with x greater than 100
+\color{blue} drop if x>100 
+
+\color{black}
+
+Some options in R:
+```{r, eval=FALSE}
+mydata_sub <- subset(mydata,!x>100)
+
+mydata_sub <- mydata[mydata$x<=100]
+
+#Tidyverse
+mydata_sub <- filter(mydata, x>100)
+```
+
+
+2. Merge: Merge two data sets together by index variable(s)
+\color{blue} merge 1:1 index using "mydata2.dta"
+
+\color{black}
+
+Some options in R:
+```{r, eval=FALSE}
+merged_data<-merge(mydata,mydata2,index)
+```
+
+3. Append: Append mydata2 to mydata
+
+\color{blue} append using "mydata2.dta" 
+
+\color{black}
+
+Some options in R:
+```{r, eval=FALSE}
+mydata_appended <- rbind(mydata, mydata2)
+
+#Or 
+library(gtools) #install if don't have it.
+mydata_appended <- smartbind(mydata, mydata2)
+``` 
+
+4. Log files: 
+\color{blue} There is not at equivalent in R. \color{black}
+
+But options:  
+4.1. Save the objects that you want to keep as text files or excel.
+4.2. function sink. 
+```{r, eval=FALSE}
+# NOT RUN {
+sink("sink-examp.txt")
+i <- 1:10
+outer(i, i, "*")
+sink()
+# }
+# NOT RUN {
+
+# }
+# NOT RUN {
+## capture all the output to a file.
+zz <- file("all.Rout", open = "wt")
+sink(zz)
+sink(zz, type = "message")
+try(log("a"))
+2+2
+linear_model1
+## revert output back to the console -- only then access the file!
+sink(type = "message")
+sink()
+file.show("all.Rout")
+# }
+
+```
+
+5. Exporting "nice-looking tables"
+
+Data frames or table-like objects into Excel: 
+```{r, eval=FALSE}
+write_excel_csv(x, filename)
+```
+
+Most objects can be turned into a dataframe which can be easily exported to csv or xlsx files:
+```{r, eval=FALSE}
+df_coefficients<-as.data.frame(coef_ds)
+write_excel_csv(df_coefficients, "Output/model1.csv") #part of package readr.
+```
+
+Other useful packages: 
+\begin{itemize}
+\item xtable
+\item stargazer
+\item pander
+\item tables
+\end{itemize}
+
+Very useful and well explained document on package on how to create nice tables to output into Latex: \url{https://cran.r-project.org/web/packages/tables/vignettes/tables.pdf}
+
+
+6. Organize Workflow and Files: 
+  \begin{itemize}
+  \item Projects: 
+  \url{https://support.rstudio.com/hc/en-us/articles/200526207-Using-Projects}
+  \item File organization: 
+  \url{https://swcarpentry.github.io/r-novice-gapminder/02-project-intro/}
+  \url{https://towardsdatascience.com/how-to-keep-your-research-projects-organized-part-1-folder-structure-10bd56034d3a}
+  \url{https://nicercode.github.io/blog/2013-05-17-organising-my-project/}
+  \end{itemize}
+  
+7. Output graphs: 
+    1. Manually
+    2. Script:
+    pdf('filename.pdf')
+    plot( yourdata )
+    dev.off() # to complete
+    3. If using ggplot: ggsave()
+
+
+#7. Other resources
+##DataCamp:
+https://www.datacamp.com/courses/r-for-sas-spss-and-stata-users-r-tutorial

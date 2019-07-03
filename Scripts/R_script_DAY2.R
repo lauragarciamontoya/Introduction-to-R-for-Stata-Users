@@ -32,7 +32,7 @@ fahrenheit_to_kelvin(40)
 celsiustokevin(40)
 
 #Or with vectors:
-temperatures_F<-c(42,40,35,34,39,34,35)
+temperatures_F<-c(42,40,35,34,39,34,35, NA)
 
 fahrenheit_to_celsius(temperatures_F)
 
@@ -186,6 +186,11 @@ coeficcients_m1[2]
 
 #Residuals 
 summary(linear_model1)[3]
+summary(linear_model1)[[3]][5]
+
+summary(linear_model1)[[3]]["Datsun 710"]
+
+
 summary(linear_model1)$residuals
 
   
@@ -258,9 +263,8 @@ mod1_cyl8<-lm(mpg~disp, data=mtcars[mtcars$cyl==8,])
 print(mod1_cyl8)
 summary(mod1_cyl8)
 
-
+#
 stargazer(mod1_cyl6,mod1_cyl8 )
-
 
 
 #And add interaction terms: 
@@ -268,6 +272,8 @@ mtcars$am<-factor(mtcars$am)
 mtcars$am<-dplyr::recode(mtcars$am, "0"="Automatic", "1"="Manual")
 mod2<-lm(mpg~disp+am, data = mtcars)
 mod3<-lm(mpg~disp+am+disp:am, data = mtcars)
+mod3<-lm(mpg~disp*am, data = mtcars)
+
 
 #Plots
 lm3a<-ggplot(augment(mod2), aes(x=disp, y=mpg, color=am)) + 
@@ -281,7 +287,6 @@ lm3b<-ggplot(augment(mod3), aes(x=disp, y=mpg, color=am)) +
   geom_point() + geom_line(aes(y=.fitted)) + theme_bw() +theme(legend.position = "none") + annotate("text", x=300, y=30, label= "mpg = b0 + b1*D + b3*A + b4*D*A+ e")
 
 plot_combined<-plot_grid(lm3a, lm3b)
-ggsave("Output/plot.png")
 
 
 ############PRACTICE

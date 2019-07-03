@@ -1,0 +1,1518 @@
+---
+title: "Introduction to R for Stata Users"
+subtitle: "Day 1"
+author: "Laura Garcia Montoya"
+date: "6/25/2019"
+output: pdf_document
+fontsize: 15pt
+---
+
+# 0. Before we begin: 
+
+\textbf{Instructor: Laura García Montoya} \newline
+Email: lauragarciam@u.northwestern.edu \newline
+
+\textbf{Downloading and Installing R:}
+Go to: \url{https://workshops.rcs.northwestern.edu/install/r/}
+
+
+Website with documents: \newline
+\url{https://github.com/lauragarciamontoya/Introduction-to-R-for-Stata-Users}
+
+\begin{itemize}
+\item Introduction
+\item How is this workshop going to work?
+      R markdown
+      Color Code
+\item Goals for this workshop:
+  \begin{itemize}
+  \item Intro to R
+  \item Logic of objects
+  \item Main differences with Stata
+  \item Foundation to learn on your own
+  \end{itemize}
+\end{itemize}
+
+
+# 1. Introduction: What is R? and R Studio? 
+
+#R
+R is a free software environment for statistical computing and graphics. It compiles and runs on a wide variety of UNIX platforms, Windows and MacOS.
+
+#RStudio
+RStudio makes R easier to use. It is an integrated development environment for R. It includes a console, syntax-highlighting editor that supports direct code execution, as well as tools for plotting, history, debugging and workspace management. 
+
+#Why should I use R - if I already know Stata?
+\begin{itemize}
+\item IT IS FREE!!
+\item Much more internet documentation in R. 
+\item Very flexible - easy to create functions/libraries/tools. R has a much more feature rich programming language.
+\item R has much better graphical tools (ggplot2)
+\item R can hold multiple data sets.
+\item R has better tooling to query other databases, parse JSON data, scrape web sites, etc. and has way more tools and packages - text analysis, machine learning. 
+\item R markdown 
+\item BUT, it is harder to learn. 
+\item BUT, there are some things that are harder to do. For example, estimating robust standard errors is a pain. Coefficient plots. 
+\item AND: YOU CAN USE BOTH! I USE THEM FOR DIFFERENT PURPOSES. 
+\end{itemize}
+
+
+\newpage
+
+##Using R Studio
+
+Once you launch the R Studio App this is how it should look like: 
+
+\includegraphics{rstudio_picture}
+
+[STOP: ARE YOU ACTUALLY SEEING THIS? ]
+
+
+
+
+
+
+If you have not done so, type or copy in the console: 
+
+```{r, eval=FALSE}
+install.packages(c("tidyverse", "car","cowplot",  
+                   "foreign", "broom", "gapminder"),
+                 repos="http://cran.rstudio.com")
+```
+
+\newpage
+
+##The parts
+
+\begin{enumerate}
+\item \textbf{The Editor:} The top left quadrant is the editor. This is where you write R code you want to save and use later. 
+\color{blue} \textbf{In Stata}: This is the equivalent to the Do-file. \color{black}
+
+\includegraphics[width=6in]{editor_picture} \\
+
+\includegraphics[width=4in]{dofile} \\
+ 
+\newpage 
+
+\item \textbf{The console:} You can find the console in the lower left quadrant of R Studio. The console is an interactive computer programming environment for R. It takes user inputs/commands, evaluates them, and returns the result to the user.  \\
+
+\includegraphics{console_picture} \\
+
+\color{blue} \textbf{In Stata}: This is the equivalent to both the command line and the results window in Stata. \color{black}
+
+\includegraphics[width=4in]{command_results} \\
+
+\newpage
+\item \textbf{Environment/History:} The upper right corner is composed by two tabs.
+
+\underline{Environment:} Here you can see a list of all the objects you defined in the console. That is: functions, variables, datasets, values. You can also use it to import custom datasets manually and make them instantly available in the console.
+
+You can also inspect the environment of other packages you installed and loaded (more on packages at a later time). Play around with it - you can't break anything.\\
+
+\color{blue} \textbf{In Stata}: This does not have an equivalent in Stata because Stata is not object based. However, the variables windowm displays the variables in a similar way in which the Environment can display the variables inside a dataset. \color{black}
+
+\includegraphics{environment_picture} \\
+
+\underline{History:} Lists every single console command you executed since the last project started. It is saved into a hidden .Rhistory file in your projects folder. You can choose not to save your environment after a session.\\
+\color{blue} \textbf{In Stata}: This is the equivalent to the Review window in Stata. \color{black}
+
+\includegraphics[width=4in]{review} \\
+
+
+\item \textbf{Miscellaneous:} \\
+There are five tabs available in the lower right corner of RStudio. 
+Files: File directory in your computer.\\
+\includegraphics{files_picture} \\
+
+Plots: Displays the plots you produce, you can edit them and save them as images. \\
+
+Packages: Useful to install and use packages. (WE WILL LEARN WHAT THIS MEANS SOON) \\
+
+Viewer: Built-in browser. Not very used for the purposes of this workshop\\
+
+Help: Contains the help directory and displays the help file when you ask for questions. This window is extremely useful as you will notice soon.  \\
+
+\color{blue} \textbf{In Stata}: The help window that pops up in Stata works very similar to the Help tab in R Studio. \color{black}
+
+\includegraphics[width=6.5in]{help} \\
+
+\end{enumerate}
+
+[STOP: QUESTIONS SO FAR?]
+
+\newpage 
+
+##Basic Functions in the console
+
+\textbf{Calculator:} You can use the console as a calculator. Give it a try, you just need to type what you want to calculate. 
+
+The gray box with a different font you see below, means that this is code  - R. The phrases preceded with # are the instruction and the rest has the format to be typed on the console. 
+
+\color{blue} \textbf{In Stata}: This use of the console is equivalent to typing "display" followed by functions in Stata.\color{black}
+
+```{r}
+#Add 2 plus 2
+2+2
+#Multiply 2 and 3 together
+2*3
+#Calculate the log of 10. 
+log(10)
+#2+2*(3+2)
+2+2*(3+2)
+
+#What is the maximum number between 2,3,4? 
+max(2,3,4)
+```
+
+\textbf{Test logical statements:} Using comparison and logical Operators you can test if statements are TRUE OR FALSE. 
+```{r}
+#Is 1 smaller than 2?
+1<2
+#2 is smaller than 1, right? 
+2<1
+#1 is larger than 0 and 2 is larger than 0
+1>0&2>0
+#One is larger than 0 or -1 is larger than 0
+1>0|-1>0
+#One is smaller than 0 or -2 is smaller than 0
+1<0 |-2<0
+#One is smaller than 0 or 2 is smaller than 0
+1<0|2<0
+```
+
+##Getting Help / R documentation
+
+\textbf{Inside R}: You can type ? in the console followed by the name of a function to get documentation of that function, the help file it will be displayed in the help window. 
+
+\textbf{HELP:} just type ? followed by text.
+\color{blue} In Stata: Equivalent to typing help or h in the Ccommand line. \color{black}
+```{r, include=FALSE}
+#Exmple: How can I do a plot? 
+?plot
+```
+
+?function_name opens the help for function_name(). If you know the name of the function, this will tell you how it works and how you can control its operation.\footnote{Caveat:
+The documentation isn't always aimed at beginners since it requires terminology that you don't know YET. You can always use google to trouble shoot. }
+
+\textbf{In Google}: "In R how to add new column in data.frame" 
+
+\textbf{Stack Overflow}: There is a large community on the internet asking and answering questions in R. When you google a problem your are facing with R you will most likely see stack overflow, it is a reliable source of answers. 
+
+There is a vast amount of resources online for R users, and this is one of its main advantages. Many people around the world are using and it is very likely that the same errors have occurred to more than one. 
+
+##To keep in mind
+\begin{itemize}
+\item There are multiple ways to do almost everything in R
+\item Googling "how to ... in R" is necessary and very common for most people
+\end{itemize}
+
+
+##Practice Exercises
+
+\indent 1. Using the console 
+
+   a. Calculate square root of 109090  
+
+   b. Add 3 and 5 together.
+
+   c. What number is larger: The log of 2000 or the square root of 51? (Try to do this in one line only.) 
+
+   d. What is the maximum number between: the square root of 200, seven times 2, and log of 3000. (Try to do this in one line in the console)
+
+\indent 2. Google to find guidance/functions to: 
+  a. calculate standard deviation
+  b. make a histogram of a variable
+  c. import excel file
+
+\indent 3. Download and save the documentation of the package ggplot2. (Hint: Use ?)
+
+\indent 4. Find out what is wrong with the following line of code: install.package(car) (Hint: type it down on the console)
+
+
+[STOP HERE, QUESTIONS?]
+
+\newpage
+
+# 2. Introduction to Programming
+
+Programming in R means writing commands or giving instructions you want your computer to execute. 
+For now, we are going to give the commands directly in the console. Later on, we will learn how to use a script to write and run code. The advantages of using a script are being able to run your code more than once and replicating it in the future. \color{blue} The intuition is the same for Stata's do files. I don't anticipate problems here for you \color{black}.
+
+One could say that R is composed by \textbf{functions and objects}. Examples or objects include vectors, matrices, dataframes, figures. The concept \textit{function} here means the same as in the Math Camp. In R, you use functions to create, transform or delete objects.
+
+\color{red} NOTE: The object based logic in R is very different from Stata - understanding what this difference means will get you a long way in learning R \color{black}
+
+##Structure of the code:
+Coding is then ``writing'' functions to create, transform, delete, combine objects. 
+
+##Objects
+\textbf{Creating New Objects:}  Using ``<-'' in the console allows you to create and save objects. For example: 
+
+```{r,results="hide"}
+#Create the object "r" that is equal to "a".
+r<-'a'
+
+#Create the object "name" that is equal to "Laura Garcia Montoya"
+name<-'Laura Garcia Montoya'
+x<-2
+y<-3
+```
+
+Names of objects can be anything as long as they start with a letter and do not contain spaces. Developing conventions to name objects is a good coding practice. For example separating words with ``_'' or ``.''. 
+
+```{r,results="hide"}
+#Create a vector with the values of GDP for 4 countries. 
+country_gdp<-c(18,23,5,20)
+
+#This means that the first country has a GDP of 1, 
+#the second a GDP of 23, the third one a GDP of 5 and the fourth a 20. 
+#(FAKE DATA - MEANINGLESS)
+```
+
+\textbf{Example}
+```{r}
+#Create an object with name "age" assigning the value of your age in the console. 
+age<-29
+
+#Then, type "age" in the console and see what you get. 
+
+#Create an object named "program" and assign the value. 
+#In this case we are dealing with text instead of numbers. (HINT Use "")
+program<-"Political Science"
+```
+
+###Types of Objects:
+There are many types of objects. We will talk more about this later, but for now you should know objects could be: Single values, Vectors, Lists, Matrices, Data Frames. 
+
+\color{red} OBJECTS: KEY DIFFERENCE WITH STATA \color{black}
+
+"In Stata, everything is an action. You regress one variable against another. In R, everything is an object." In Stata, the environment is the data and eveything else we do, we are doing to the data. Recode variables, add new variables, rename variables, sort the data, drop observations from the data. We sometimes "collapse" the dataset into a broader level of aggregation. One exception to this "action" based logic are the store estimates or scalar in locals that we save, but these are usually temporary. 
+
+In R, on the other hand, instead of \textit{regressing} $Y \ on \  BX$, like you do in Stata, you create a linear model. Another example is the difference between tabulating a variable in Stata and creating a table in R. In Stata the commands are verbs, in R they are nouns. 
+
+This logic is what allows you in R to have multiple datasets open at the same time. Opening a dataset in R means that you are creating an object of the type dataframe. More on this later. \footnote{Based on Blissett 2016 which can be found here \url{http://rslblissett.com/wp-content/uploads/2016/09/RTutorial_160930.pdf}
+}
+
+## Functions
+Functions take multiple input objects and return output objects. We have seen some functions already. For example sqrt(), log(), max().
+
+\color{blue} The logic of functions in very similar in both programs.  \color{black}
+
+\textbf{Common functions:}
+
+```{r}
+# To calculate mean, mean()
+mean(c(2,3,4))
+
+#To add values
+sum(c(2,3,40000,3020))
+
+#Print, prints the value of the object. 
+print(mean(c(2,3,4))) #Notice that with the correct use of () you can combine functions. 
+
+#Ifelse, evaluates a logical statement and returns a value for TRUE and a value for FALSE. 
+ifelse(2>3, 0, 1)
+```
+
+You can combine functions and objects: 
+```{r}
+#Creates an object "mean_gdp" using the function mean() using the object we created above "country_gdp". 
+mean_gdp<-mean(country_gdp)
+```
+
+Or a more ellaborate example: 
+```{r}
+#Use object `age' to calculate the year you were born. 
+year_born<-2018-age
+print(year_born)
+
+#Works for me since my true birthday is in february. 
+
+#But what if my true birthday was in October? 
+#We can use think of a more complicated function that uses conditionals. 
+
+#1. Create month of birth in numbers
+month<-10
+
+#2. Create function that assigns year I was born. Using ifelse function. 
+
+year_birth<-ifelse(month>9,2018-age+1, year_birth)
+print(year_birth)
+
+#Now, what if my birthday was tomorrow (Sept 20)? 
+day<-20
+month<-9 #replace value of month from 9 to 10. 
+
+#We can combine ifelse(). ifelse() is a very useful function! 
+year_birth<-ifelse(month<9,2018-age,ifelse((month=9&day<20),2018-age,2018-age+1))
+print(year_birth)
+
+```
+
+[STOP HERE: QUESTIONS?]
+\newpage
+
+##Packages
+
+Not all the functions you will need are already programmed in R. But, there are many packages that have more specific functions. These can be found in packages that you can install and use in R. ``An R package is a collection of functions, data, and documentation that extends the capabilities of base R. Using packages is key to the successful use of R.'' We talked about this last time. 
+
+\color{blue}
+In Stata this logic is similar - ssc install. 
+\color{black}
+
+\textbf{Installing packages}
+1. To install package: type in the console the following line. ?install.packages. 
+
+Let's try installing package foreign. 
+```{r,eval=FALSE}
+install.packages('foreign', repos = "http://cran.us.r-project.org") 
+```
+
+Another option is to use the window ``Packages''
+
+\includegraphics[width=8cm]{packages_picture} \\
+
+2. Once the package is installed you need to load the package. Loading the package is necessary in each new R session in which you will use the package (unlike installation, which has to be done just once)
+
+```{r,results="hide"}
+library(foreign)
+library(dplyr)
+```
+
+3. One source of complication is that two packages might have the same function. Depending on which one you load first R will mask the function for one of them. If this happens, you will get a warning and you can fix it on time. 
+
+## Working directory 
+
+### Where does the analysis live in your computer?
+Working Directory: This is where R looks for files and this is also where it saves any file you want to save. You can identify the current working directory by typing in the console: 
+
+
+```{r, results="hide"}
+getwd()
+```
+
+Set Working Directory: You can also set a working directory by typing in the console: 
+
+\color{blue} Equivalent to Stata's \textit{cd} \color{black}
+
+
+```{r, results="hide"}
+setwd("/Users/lauragarciamontoya/Box Sync/PhD/R Workshop/R for Stata Users Workshop") #your own
+```
+
+\textbf{TIP: BE ORGANIZED:} It is very easy to generate chaos in your computer (and brains) by not paying attention to the location of the files and making sure that you have a consistent system of organizing your files. 
+
+\textbf{Note on File organization}:In R you can have entire R projects, which are associated with R working directories. They work as folders in which you have workspace, history, source documents, objects, functions. 
+
+More information on projects here: \url{https://support.rstudio.com/hc/en-us/articles/200526207-Using-Projects}
+
+## Console ??? Script (how to use them)
+The script is where you keep a record the "clean" code.  
+
+##Best practices of coding and workflow - applies to Stata as well 
+\textbf{Comments}: Use # to comment your code. R will ignore it but you do want to make sure you keep track of what and why you write certain lines of code. 
+
+\color{blue} The same is done in Stata's do files using * for comments \color{black}
+
+```{r}
+#This part of the code creates variable of outcome
+outcome<-c(1,2,3)
+
+#This part of the code creates variable "new_name" equal to variable "outcome" + 2.
+new_name<-outcome+2
+```
+  
+\textbf{Check}: Check the object you just created, revise if the function works. 
+  
+\textbf{Formatting}: Make sure you are organized in your scripts, if you get used to this good practice your life will be easier in the future. 
+
+## To keep in mind
+\begin{itemize}
+\item R functions don't change the value of a variable or dataset
+\item if you just type sort(myvector) nothing will happen. 
+\item Instead: 
+myvector <- sort(myvector)
+\end{itemize}  
+  
+##Practice
+
+1. Create an object with the name "x": 
+
+Pick a number and Save it as x \newline
+Multiply x by 3 \newline
+Take the log of the above \newline
+Subtract 4 from the above \newline
+Square the above \newline
+
+2. Install and load the package car 
+
+3. Write a line of code in which you:
+ a. Create an object named "adult"
+ b. Assing the value of 1 if age>=18 and 0   otherwise. (ifelse() should be helpful)
+
+4. Write code in your console such that: 
+  a. You create an object with the ages of all the members of your family. 
+  b. You calculate the average age of your family members. 
+  c. You count how many of your family members are older than you. 
+ 
+5. Repeat 3 - but now, let's use a script to write your lines of code. \\
+
+  1. Open a new file - R script. 
+  
+  \includegraphics[width=10cm]{rscript_picture} \\
+
+  2. This is how it should look like: 
+  
+  \includegraphics[width=10cm]{rscript_picture2} \\
+
+  3. Just type your code, make sure you include comments.
+  
+  \includegraphics[width=10cm]{rscript_picture3} \\
+
+  4. Use the upper/right botton to \textit{run} your code.
+  
+  \includegraphics[width=10cm]{rscript_picture4} \\
+
+  5. Make sure you save your script
+  
+  \includegraphics[width=10cm]{rscript_picture5} \\
+
+[STOP HERE]
+
+\newpage
+
+
+#3. Vectors, matrices and data frames - INDEXING
+
+##3.1 Vectors
+Vectors (also called arrays) are one possible type of object. You can create a vector with the "c()" function. "c" stands for combine. Vectors can only contain one type of values (text, numbers) In turn, the coding structure we used to create and name objects is the same that we used above. 
+
+###Example
+```{r, results=TRUE}
+name_vector<-c('value1', 'value2', 'value3')
+```
+
+###3.1.1 Structure of vectors: 
+```{r, results=TRUE}
+a<-c(1:10)
+a
+
+y<-c(1:10)
+y
+
+z<-c(1,3,5,'a',6,5,3,5,7,8) #Notice that by including 'a', numbers became text.
+z
+```
+
+###3.1.2 Indexing Vectors
+
+There are multiple ways to access or replace values in vectors or other data structures. The most common approach is to use \textit{Indexing}. 
+\color{red}
+KEY 1: Brackets [ ] are used for indexing, whereas parentheses ( ) are used to call a function. 
+KEY 2:Mastering the art of indexing early will be of great help in the learning curve of R. 
+KEY 3: This is an important difference with STATA - key to understand logic of indexing. \color{black}
+
+a. Vector indexes (and all other indexes in R) start with 1, not 0:
+```{r, results=TRUE}
+x<-c('a', 'b', 'c', 'd', 'e') 
+x[1]
+```
+
+b. You can take slices of vectors: take 
+```{r, results=TRUE}
+x[1:3] 
+```
+
+c. Or exclude values with a negative sign:
+```{r, results=TRUE}
+x[-1] 
+```
+
+d. Elements are returned in the order that the indices are supplied:
+```{r, results=TRUE}
+x[c(5,1)] 
+```
+
+e. You can use a vector of integers or booleans to select from a vector as well:
+```{r, results=TRUE}
+
+x[x<'c'] 
+
+x[c(1,3,5)]
+
+```
+
+####Practice: Creating vectors and indexing: 
+
+\begin{enumerate}
+\item Create one vector named "months" which contains the months of the year.
+\item Create one vector named "days" which contains the days of the week 
+\item Display all the months of the year
+\item Indexing, display the first 6 months of the year
+\item Indexing, display your favorite month of the year
+\item Indexing, display all of the months of the year except your least favorite
+\end{enumerate}
+
+###3.1.3 Other useful functions
+Get the length of a vector with function length: 
+```{r, results=TRUE}
+length(x) 
+```
+
+You can check if a vector contains a certain value using %in%
+```{r, results=TRUE}
+'b' %in% x # Is value 'b' found in vector x?
+```
+
+Use function "which" to find all positions:
+```{r, results=TRUE}
+y <- c(1:3, 1:3) 
+which(y == 3) #In which positions can I find 3 in vector y? 
+
+```
+
+Or get the first position of one or more elements in a vector with the "match" function: 
+
+```{r, results=TRUE}
+match(c('b', 'd', 'k'), x) 
+```
+
+You can also name the elements of a vector with the function "names".
+```{r, results=TRUE}
+x<-1:5 
+names(x)<-c("Ohio","Illinois","Indiana","Michigan","Wisconsin") 
+```
+
+Which allows you to select values from the vector using the names:
+```{r, results=TRUE}
+x["Ohio"] 
+x[c("Illinois", "Indiana")]
+
+```
+
+###3.1.4 Factors: 
+Factors are a special type of vector can be used for categorical variables: 
+```{r, results=TRUE}
+colors<-c("red", "blue", "green", "red", "red", "blue")
+
+colors_factors<-factor(colors)
+```
+
+They could also be converted into integers, not always useful but good to know it is possible:  
+```{r, results=TRUE}
+colors_levels<-as.integer(colors_factors)
+colors_levels
+
+mean(colors_levels)
+
+gender<-c("f","m","m","m","f")
+gender
+
+gender_levels<-as.integer(factor(gender))
+gender_levels
+```
+
+
+##3.2 Matrices: 
+
+Matrices are conformed by one or more vectors. KEY: all vectors in a matrix have to be of the same type, and lenght. 
+
+####Practice
+Use the help command in R to figure out how to create the following matrix
+
+\includegraphics{matrix}
+\newline
+
+```{r}
+?matrix
+```
+
+[STOP HERE]
+
+###3.2.1 Creating matrices: 
+```{r, results=TRUE}
+A<-matrix(c(1,2,3,11,12,13),nrow = 3,ncol = 2)
+
+B<-matrix(c(0,1,4,10,15,20),nrow = 2,ncol = 3)
+
+matrix(c('a', 'b', 'c', 'd'), nrow=2)
+
+y<-matrix(1:25, nrow=5, byrow=TRUE)
+
+y
+
+```
+
+```{r, results=FALSE}
+y%*%y #Matrix multiplication
+x<-1:5 #Create new variable
+y%*%x
+y^-1  #matrix inversion
+y * -1
+```
+
+###3.2.2 Indexing matrices: 
+The logic of indexing is similar to that of the vectors. However, here we have two dimensions that we care about: row and column. 
+
+Elements in a matrix can be identified indexing the following way: 
+```{r, results=TRUE}
+y[1,1] #Element in row 1 column 1
+y[1,] #Elements in Row 1 
+y[,1] #Elements in Column 1
+y[1:2,3:4]
+y[,c(1,4)]
+```
+
+
+## 3.3 Lists:
+
+Lists are a bit like complex vectors. An element of a list can hold any other object, including another list. You can keep multi-dimensional and ragged data in R using lists. Not useful now, but good to know they exist. 
+
+```{r, results=TRUE}
+l1 <- list(1, 'a', TRUE, 1+4i, c(1,3,4,6))
+l1
+```
+
+###3.3.1 Indexing lists
+Elements of the list:
+```{r, results=TRUE}
+l1[1]
+
+l1[5]
+```
+Elements that are part of an element of a list:
+```{r, results=TRUE}
+l1[[2]][1]
+
+l1[[5]][2]
+
+```
+
+## 3.4 Data Frames
+
+Data frames are the core data structure in R. A data frame is a list of named vectors with the particularity that all vectors have the same length. Columns are typically variables and rows are observations. Different columns can have different types of data:
+
+###3.4.1 Creating Data Frames
+Using these commands we will create our own dataframe: 
+
+KEY: LENGHT OF THE VECTORS HAS TO BE THE SAME, but each vector can be different type. 
+
+```{r, results=FALSE}
+id<-1:20 #creating a vector with number from 1:20
+color<-c(rep("red", 3), rep("green",10), rep("blue", 7)) 
+gender<-c(rep("f",10),rep("m",10))
+score<-runif(20)
+
+#Put together vectors in one data frame with the name df. 
+df<-data.frame(id, color, score,gender)
+```
+
+Instead of making individual objects first, we could do it all together:
+```{r, results=FALSE}
+df<-data.frame(id=1:20, 
+               color=c(rep("red", 3), rep("green",10), rep("blue", 7)),
+               score=runif(20), gender=c(rep("f",10),rep("m",10))
+)
+```
+
+We can now use some functions to explore what we have in our data frame: 
+```{r, results=TRUE}
+#Table
+table(df$color,df$gender)
+table(df$color)
+
+#Dimension
+dim(df)
+
+#First 6 rows 
+head(df) #possible to adjust the number of rows
+head(df,10)
+```
+
+###3.4.2 Indexing Data Frames: 
+Data frames can be indexed like matrices to retrieve the values.
+```{r}
+df[2,2] #Retrieves value in row 2 column 2. 
+df[1,] #Retrieves row 1.
+df[-(2:3),]#Retrieves all except rows 2 to 3. 
+```
+
+####Practice 1:
+Index to retrieve the following values: 
+\begin{enumerate}
+\item Third column
+\item Rows 6 to 10 in column 3. 
+\item All values except those in column 2. 
+\item All values except those in row 1 and column 10. 
+\end{enumerate}
+
+\newpage 
+
+###3.4.3 Alternatives ways of Indexing in Data Frames: 
+
+Each of the vectors in a dataframe has a name. You can also use the names of the vector after a $ (instead of indexing): 
+
+```{r, results=TRUE}
+df$color
+```
+
+Indexing into a data frame with a single integer or name of the column will give you the column(s) specified as a new data frame.
+```{r, results=TRUE}
+df['color']
+df[2:3]
+```
+
+Instead of index numbers or names, you can also select values by using logical statements. This is usually done when the goal is to select rows.
+```{r, results=TRUE}
+df[df$color == "green",]
+```
+
+####Practice 2: 
+Describe in words what the followings commands mean. 
+```{r, results=TRUE}
+df[df$score > .5,]
+df[df$score > .5 & df$color == "blue",]
+```
+
+You can count number of observations by using logical statements and sum. 
+```{r, results=TRUE}
+sum(df$score > .5)
+```
+
+You can assign names to the rows of a data frame as well as to the columns, and then use those names for indexing and selecting data.
+```{r, results=TRUE}
+rownames(df)
+```
+
+You can add columns or rows simply by assigning values to them.
+```{r, results=TRUE}
+df$weight<-c(rnorm(20))
+```
+
+rbind and cbind (for row bind and column bind) are two functions that can be useful when you want to combine a vector with a dataframe.
+```{r, results=TRUE}
+df$year<-1901:1920
+df
+
+year_plus_1<-1902:1921
+
+df<-cbind(df,year_plus_1)
+```
+
+You could rename columns (variables) with function names()
+```{r, results=TRUE}
+names(df)[names(df)=='color'] <- 'rainbow'
+
+names(df)
+```
+
+Create subsets using indexing/conditions
+```{r, results=TRUE}
+mysubset<-list(reds=df[df$rainbow == "red",])
+```
+
+or a subset of variables
+```{r, results=TRUE}
+mysubset2<-cbind(df$rainbow,df$year)
+```
+
+\newpage
+
+### 3.4.3 Importing Datasets 
+
+Before we start, make sure you download and save the excel file "Example_data.xls" available on Github. Save it in a place that is easy to find later.
+
+#####a) Using the environment window: 
+You can import to R any a dataset you previously saved in computer. It will allow you to access your file directory and to navigate in your computer until you find and select the document. 
+
+\includegraphics{environment_picture_importdata} 
+
+#####b) Using lines of code
+
+This one is harder because it implies understanding of directory/path in your computer and in R. We will import the same dataset "Example_data.xls" Once you are comfortable with setwd() and how to type paths, this is the most efficient option. You can run a script that has a line to import the datasets.
+
+```{r}
+##This will show you the current working directory.
+getwd()
+
+##Change it to your own working directory (varies for each person)
+#setwd("/Users/lauragarciamontoya/Desktop")
+library(readxl) 
+#imported_data_example<-read_excel("/Desktop/Example_data.xls") # SPECIFY THE PATH. 
+```
+
+#####c) Datasets that are part of packages. 
+
+```{r}
+install.packages('gapminder', dep=TRUE, repos = "http://cran.us.r-project.org")
+library(gapminder)
+```
+
+#####d) With a url - dataset that is in a website
+```{r}
+site="http://faculty.wcas.northwestern.edu/~lmh735/nes2008.RData"
+load(file=url(site))
+ls()
+
+```
+
+[STOP HERE: QUESTIONS?]
+
+
+##ADDITIONAL RESOURCES: 
+
+###Books: 
+
+R for Stata Users (Muenchen and Hilbe)
+
+\scalebox{0.5}{
+\includegraphics{book1}
+} 
+
+
+R for Data Science: Import, Tidy, Transform, Visualize, and Model Data (Wickham and Grolemund)
+
+\scalebox{0.5}{
+\includegraphics{book2}
+}
+
+##LINKS TO USEFUL WEBSITES: 
+
+\url{http://rslblissett.com/wp-content/uploads/2016/09/RTutorial_160930.pdf} 
+
+\url{https://github.com/nuitrcs/rworkshops}
+
+\url{https://www.rstudio.com/resources/cheatsheets/}
+
+
+###Focused on Stata to R
+\url{https://dlab.berkeley.edu/blog/quick-and-easy-way-turn-your-stata-knowledge-r-knowledge}
+
+\url{https://dss.princeton.edu/training/RStata.pdf}
+
+\url{https://github.com/EconometricsBySimulation/RStata/wiki/Dictionary:-Stata-to-R}
+
+
+
+#Tidyverse 
+
+Tydiverse is a huge package in R developed by Garrett Grolemund and Hadley Wickham. They have a really great book to lear this package (you can find it online for free here:https://r4ds.had.co.nz). For this workshop I mostly rely on the material developed by them (chapter 5). In the ideal future, you will read the full book and be able to answer all practice questions. In the meantime, I present here the main take aways from chapter 5. 
+
+\begin{center}
+\includegraphics{book2}
+\end{center}
+
+For example, ggplot and dplyr are very useful packages that are part of the tidyverse package.  
+
+#1. Prerequisites: Install and load relevant packages
+```{r, eval=FALSE}
+install.packages("tidyverse")
+library(tidyverse)
+library(dplyr)
+```
+
+
+#2. The datasets: 
+
+In order to see how dplyr works, we will use the same dataset that is used in the book. However, we will work in parallel with the dataset we have been using through out the quarter. In real life your datasets will look more like the latter. You will have to be attentive to the fact that there will be two datasets uploaded in R.   
+
+##2.1 Flights dataset
+```{r, eval=FALSE}
+install.packages("nycflights13",repos = "http://cran.us.r-project.org")
+
+library(nycflights13)
+```
+
+##2.2 Our example dataset: 
+```{r, eval=FALSE}
+library(readxl)
+setwd("~/Box Sync/PhD/TAship/FIFTH YEAR/TA - FALL/Database/")
+data_example <- read_excel("Data_example_class.xls")
+```
+
+##2.3 Basic information about datasets
+Once, tydiverse is loaded, by typping the name of the dataset you will obtain a brief overwiew of the dataset: a tibble. It is a bit differente to what we are used to see in the past with command head(). ``Tibbles are data frames, but slightly tweaked to work better in the tidyverse.''
+
+```{r, eval=FALSE}
+flights
+
+data_example
+```
+
+
+#3. dplyr
+
+## Six Basic functions:
+''These six functions provide the verbs for a language of data manipulation.'':
+
+\begin{itemize}
+\item select(): Pick variables by their names
+\item filter(): Pick observations by their values. 
+\item arrange(): Reorder the rows
+\item mutate(): Create new variables with functions of existing variables 
+\item summarise(): Collapse many values down to a single summary
+\item group$\_$by(): changes the scope of each function from operating on the entire dataset to operating on it group-by-group.
+\end{itemize}
+
+We can combine these functions to get at more complex processes. The structure of the functions is similar:
+
+input: original dataframe \\ 
+what to do: instructions \\
+output: a new data frame \\
+
+\begin{enumerate}
+\item The first argument is a data frame.
+\item The subsequent arguments describe what to do with the data frame, using the variable names (without quotes).
+\item The result is a new data frame.
+\end{enumerate}
+
+##3.1 Filter
+
+``Allows you to subset observations based on their values. The first argument is the name of the data frame. The second and subsequent arguments are the expressions that filter the data frame. For example, we can select all flights on January 1st with:''\\
+
+```{r, eval=FALSE}
+filter(flights, month == 1, day==1)
+```
+
+Or all the observations of the country Afghanistan
+```{r, eval=FALSE}
+filter(data1, CountryCode == "AFG")
+```
+
+Note: {\color{blue} dplyr} \color{black} executes the filtering operation and returns a new data frame. dplyr functions never modify their inputs, so if you want to save the result, you’ll need to use the assignment operator $<-$: 
+
+```{r, eval=FALSE}
+jan1 <- filter(flights, month == 1, day == 1)
+```
+
+If you want R to print the object, you can wrap the whole thing in parenthesis. Let's try it with my birthday!
+
+```{r,eval=FALSE}
+(feb22 <- filter(flights, month == 2, day == 22))
+```
+
+You can also combine logical operators with these functions,
+
+```{r,eval=FALSE}
+summer_months<-filter(flights, month=7 | month==8 | month==9)
+```
+
+###3.1.1 Practice Exercises: Filter 
+(From the book)
+
+\begin{enumerate}
+\item Find all flights that:
+\begin{enumerate}
+\item Had an arrival delay of two or more hours
+\item Flew to Houston (IAH or HOU)
+\item Were operated by United, American, or Delta
+\item Departed in summer (July, August, and September)
+\item Arrived more than two hours late, but didn’t leave late
+\item Were delayed by at least an hour, but made up over 30 minutes in flight
+\item Departed between midnight and 6am (inclusive)
+\end{enumerate}
+\item Another useful dplyr filtering helper is between(). What does it do? Can you use it to simplify the code needed to answer the previous challenges?
+
+\item How many flights have a missing departure time? What other variables are missing? What might these rows represent?
+\end{enumerate}
+
+
+(From World Bank dataset)
+
+\begin{enumerate}
+\item Find all countries that:
+\begin{enumerate}
+\item in 2001, had more than 70% in Agricultural land (% of land area) (variable name - aAGLNDAGRIZS).		
+\item In any year between 2005 and 2008, had less than 1000 Electric power consumption (kWh per capita) (variable name - aEGUSEELECKHPC)
+\item In any year between 2005 and 2008, had more than 10000 Electric power consumption (kWh per capita) (variable name - aEGUSEELECKHPC)
+\end{enumerate}
+\end{enumerate}
+
+
+##3.2 Arrange
+``arrange() works similarly to filter() except that instead of selecting rows, it changes their order. It takes a data frame and a set of column names (or more complicated expressions) to order by. If you provide more than one column name, each additional column will be used to break ties in the values of preceding columns:''
+
+```{r, eval=FALSE}
+arrange(flights, year, month, day)
+
+(arrange(data1, year))
+```
+
+What if you wanted descending order according to year as opposed to ascending? 
+```{r, eval=FALSE}
+arrange(flights, desc(year), month, day)
+```
+
+Note: Missing values will always be sorted at the end. 
+###3.2.1 Practice Exercises: Arrange
+(From the book)
+\begin{enumerate}
+
+\item How could you use arrange() to sort all missing values to the start? (Hint: use is.na()).
+
+\item Sort flights to find the most delayed flights. Find the flights that left earliest.
+
+\item Sort flights to find the fastest flights.
+
+\item Which flights travelled the longest? Which travelled the shortest?
+
+\end{enumerate}
+
+##3.3 Select
+``select() allows you to rapidly zoom in on a useful subset using operations based on the names of the variables.''
+
+```{r, eval=FALSE}
+select(flights, year, month, day)
+```
+
+Alternatively, you can specify a range of variables. 
+```{r, eval=FALSE}
+select(flights, year:day)
+
+select(data_example, CountryName:aENATMCO2EKDGD )
+```
+
+Or, you can provide a list of variables you do not want to select. 
+```{r, eval=FALSE}
+select(flights, -(year:day))
+```
+
+###3.3.2 Helper functions
+
+In addition, there are a number of helper functions you can use within select():
+
+For example: 
+starts_with("abc"): matches names that begin with “abc”.
+
+ends_with("xyz"): matches names that end with “xyz”.
+
+contains("ijk"): matches names that contain “ijk”.
+
+matches("(.)\\1"): selects variables that match a regular expression. (more details in book)
+
+###3.3.2 Rename
+A variant of the function select() is the function renamed(). It can be use to rename variables.Like this: 
+
+```{r, eval=FALSE}
+rename(flights, tail_num = tailnum)
+```
+
+By using select() in conjunction with everyting(), allows you to reorder your variables:  
+
+```{r, eval=FALSE}
+rename(flights, time_hour, air_time, everything())
+```
+
+###3.3.3 Practice Exercises
+
+\begin{enumerate}
+
+\item Brainstorm as many ways as possible to select dep$\_$time, dep$\_$delay, arr$\_$time, and arr$\_$delay from flights.
+
+\item What happens if you include the name of a variable multiple times in a select() call?
+
+\item What does the one$\_$of() function do? Why might it be helpful in conjunction with this vector?
+
+vars$<-$ c("year", "month", "day", "dep$\_$delay", "arr$\_$delay")
+
+\item Does the result of running the following code surprise you? How do the select helpers deal with case by default? How can you change that default?
+
+```{r, eval=FALSE}
+select(flights, contains("TIME"))
+```
+
+\end{enumerate}
+
+##3.4 Mutate: Adding new variables
+
+mutate() allows you to create new variables as function of existing one. It will add new columns to the end of dataset. 
+
+```{r, eval=FALSE}
+flights<-mutate(flights, gain=dep_delay - arr_delay, speed=distance/air_time*60)
+
+View(flights)
+```
+
+###3.4.1 Practice Exercise
+(From the book)
+\begin{enumerate}
+\item Currently departure time and scheduled departure time are convenient to look at, but hard to compute with because they’re not really continuous numbers. Convert them to a more convenient representation of number of minutes since midnight.
+
+\item Compare air time with arrival time - departure time. What do you expect to see? What do you see? What do you need to do to fix it?
+
+\item Compare departure time, scheduled departured time, and departure delay. How would you expect those three numbers to be related?
+
+\end{enumerate}
+
+##3.5 Summarise
+
+This function collapses data to a single row. 
+
+```{r, eval=FALSE}
+(summarise(flights, delay = mean(dep_delay, na.rm = TRUE)))
+
+```
+
+summarise() is more useful if we combine it with group$\_$by(). ``This changes the unit of analysis from the complete dataset to individual groups. Then, when you use the dplyr verbs on a grouped data frame they’ll be automatically applied “by group”. For example, if we applied exactly the same code to a data frame grouped by date, we get the average delay per date:''
+
+```{r, eval=FALSE}
+by_day <- group_by(flights, year, month, day)
+summarise(by_day, delay = mean(dep_delay, na.rm = TRUE))
+by_day
+```
+
+
+
+
+
+MERGE: 
+
+\begin{table}
+\begin{tabular}{|c|c|c|}
+\hline
+Function & Stata & R & Description\\
+\hline
+Drop & drop if x>100 &	mydata <- subset(mydata,!x>100)	& Drop observations with x greater than 100 \\
+\hline
+Merge & merge 1:1 index using "mydata2.dta" & merge(mydata,mydata2,index) & Merge two data sets together by index variable(s) \\
+\hline
+Append & append using "mydata2.dta"	& mydata <- rbind(mydata, mydata2) & 	Append mydata2 to mydata \\
+
+
+\end{tabular}
+\end{table}
+
+
+#In Stata
+	
+
+	#3.4.3. Dealing with Missing Values
+Some times, datasets that you import will contain missing values. For example a country that did not collect information on religion on the census. If you don't deal with NAs, you will likely encounter errors. 
+
+```{r}
+#Imagine we have a vector with the most popular religion in each of 10 countries. 
+pop_religion<-c('Catholicism', 'Hinduism', 'Protestantism', 'Islam', NA, 'Catholicism', NA, 'Budism', 'Islam', NA)
+```
+
+You can use function is.na to identify where the missing values are. 
+```{r}
+is.na(pop_religion) #Where are they?
+which(is.na(pop_religion)) #In which positions? 
+sum(is.na(pop_religion)) #how many? 
+table(pop_religion)
+```
+
+
+COLLAPSE
+
+
+
+#MODELS:
+
+LINEAR REGRESSION
+
+PANEL DATA
+
+
+
+
+
+
+##Additional Resources
+
+http://www.r-graph-gallery.com/portfolio/ggplot2-package/
+
+https://dcgerard.github.io/stat234/base_r_cheatsheet.html 
+
+
+#Books
+
+\color{red}
+Books
+
+
+R for Data Science is a book available online. It is written by Hadley Wickham and Garrett Grolemund, who work at RStudio and wrote many of the popular R packages for data manipulation. There's a welcoming online community of folks working on material from this book.
+
+An Introduction to Statistical and Data Sciences via R by Chester Ismay and Albert Y. Kim: learn data science and statistics concepts along with R
+
+The Use R! series of books are available online through the Northwestern library. Search the library catalog for the title you're interested in, then follow the links in the search result to gain access to the online version of the book. The series has a few titles about general skills, but many additional domain-specific titles. Pay attention to the publication date, as occasionally information may be outdated (although usually still a good reference).
+
+Advanced R by Hadley Wickham, for when you're ready to take the next step. Much of the material here you won't need when just doing routine analysis with R, but it's essential material if you're trying to really understand how R works.
+
+# 
+
+https://johnricco.github.io/2016/06/14/stata-dplyr/
+
+
+#Tidyverse 
+
+Tydiverse is a huge package in R developed by Garrett Grolemund and Hadley Wickham. They have a really great book to lear this package (you can find it online for free here:https://r4ds.had.co.nz). For this workshop I mostly rely on the material developed by them (chapter 5). In the ideal future, you will read the full book and be able to answer all practice questions. In the meantime, I present here the main take aways from chapter 5. 
+
+\begin{center}
+\includegraphics{book2}
+\end{center}
+
+For example, ggplot and dplyr are very useful packages that are part of the tidyverse package.  
+
+#1. Prerequisites: Install and load relevant packages
+```{r, eval=FALSE}
+install.packages("tidyverse")
+library(tidyverse)
+library(dplyr)
+```
+
+
+#2. The datasets: 
+
+In order to see how dplyr works, we will use the same dataset that is used in the book. However, we will work in parallel with the dataset we have been using through out the quarter. In real life your datasets will look more like the latter. You will have to be attentive to the fact that there will be two datasets uploaded in R.   
+
+##2.1 Flights dataset
+```{r, eval=FALSE}
+install.packages("nycflights13",repos = "http://cran.us.r-project.org")
+
+library(nycflights13)
+```
+
+##2.2 Our example dataset: 
+```{r, eval=FALSE}
+library(readxl)
+setwd("~/Box Sync/PhD/TAship/FIFTH YEAR/TA - FALL/Database/")
+data_example <- read_excel("Data_example_class.xls")
+```
+
+##2.3 Basic information about datasets
+Once, tydiverse is loaded, by typping the name of the dataset you will obtain a brief overwiew of the dataset: a tibble. It is a bit differente to what we are used to see in the past with command head(). ``Tibbles are data frames, but slightly tweaked to work better in the tidyverse.''
+
+```{r, eval=FALSE}
+flights
+
+data_example
+```
+
+
+#3. dplyr
+
+## Six Basic functions:
+''These six functions provide the verbs for a language of data manipulation.'':
+
+\begin{itemize}
+\item select(): Pick variables by their names
+\item filter(): Pick observations by their values. 
+\item arrange(): Reorder the rows
+\item mutate(): Create new variables with functions of existing variables 
+\item summarise(): Collapse many values down to a single summary
+\item group$\_$by(): changes the scope of each function from operating on the entire dataset to operating on it group-by-group.
+\end{itemize}
+
+We can combine these functions to get at more complex processes. The structure of the functions is similar:
+
+input: original dataframe \\ 
+what to do: instructions \\
+output: a new data frame \\
+
+\begin{enumerate}
+\item The first argument is a data frame.
+\item The subsequent arguments describe what to do with the data frame, using the variable names (without quotes).
+\item The result is a new data frame.
+\end{enumerate}
+
+##3.1 Filter
+
+``Allows you to subset observations based on their values. The first argument is the name of the data frame. The second and subsequent arguments are the expressions that filter the data frame. For example, we can select all flights on January 1st with:''\\
+
+```{r, eval=FALSE}
+filter(flights, month == 1, day==1)
+```
+
+Or all the observations of the country Afghanistan
+```{r, eval=FALSE}
+filter(data_example, CountryCode == "AFG")
+```
+
+Note: {\color{blue} dplyr} \color{black} executes the filtering operation and returns a new data frame. dplyr functions never modify their inputs, so if you want to save the result, you’ll need to use the assignment operator $<-$: 
+
+```{r, eval=FALSE}
+jan1 <- filter(flights, month == 1, day == 1)
+```
+
+If you want R to print the object, you can wrap the whole thing in parenthesis. Let's try it with my birthday!
+
+```{r,eval=FALSE}
+(feb22 <- filter(flights, month == 2, day == 22))
+```
+
+You can also combine logical operators with these functions,
+
+```{r,eval=FALSE}
+summer_months<-filter(flights, month=7 | month==8 | month==9)
+```
+
+###3.1.1 Practice Exercises: Filter 
+(From the book)
+
+\begin{enumerate}
+\item Find all flights that:
+\begin{enumerate}
+\item Had an arrival delay of two or more hours
+\item Flew to Houston (IAH or HOU)
+\item Were operated by United, American, or Delta
+\item Departed in summer (July, August, and September)
+\item Arrived more than two hours late, but didn’t leave late
+\item Were delayed by at least an hour, but made up over 30 minutes in flight
+\item Departed between midnight and 6am (inclusive)
+\end{enumerate}
+\item Another useful dplyr filtering helper is between(). What does it do? Can you use it to simplify the code needed to answer the previous challenges?
+
+\item How many flights have a missing departure time? What other variables are missing? What might these rows represent?
+\end{enumerate}
+
+
+(From World Bank dataset)
+
+\begin{enumerate}
+\item Find all countries that:
+\begin{enumerate}
+\item in 2001, had more than 70% in Agricultural land (% of land area) (variable name - aAGLNDAGRIZS).		
+\item In any year between 2005 and 2008, had less than 1000 Electric power consumption (kWh per capita) (variable name - aEGUSEELECKHPC)
+\item In any year between 2005 and 2008, had more than 10000 Electric power consumption (kWh per capita) (variable name - aEGUSEELECKHPC)
+\end{enumerate}
+\end{enumerate}
+
+
+##3.2 Arrange
+``arrange() works similarly to filter() except that instead of selecting rows, it changes their order. It takes a data frame and a set of column names (or more complicated expressions) to order by. If you provide more than one column name, each additional column will be used to break ties in the values of preceding columns:''
+
+```{r, eval=FALSE}
+arrange(flights, year, month, day)
+
+arrange(data_example, year)
+```
+
+What if you wanted descending order according to year as opposed to ascending? 
+```{r, eval=FALSE}
+arrange(flights, desc(year), month, day)
+```
+
+Note: Missing values will always be sorted at the end. 
+###3.2.1 Practice Exercises: Arrange
+(From the book)
+\begin{enumerate}
+
+\item How could you use arrange() to sort all missing values to the start? (Hint: use is.na()).
+
+\item Sort flights to find the most delayed flights. Find the flights that left earliest.
+
+\item Sort flights to find the fastest flights.
+
+\item Which flights travelled the longest? Which travelled the shortest?
+
+\end{enumerate}
+
+##3.3 Select
+``select() allows you to rapidly zoom in on a useful subset using operations based on the names of the variables.''
+
+```{r, eval=FALSE}
+select(flights, year, month, day)
+```
+
+Alternatively, you can specify a range of variables. 
+```{r, eval=FALSE}
+select(flights, year:day)
+
+select(data_example, CountryName:aENATMCO2EKDGD )
+```
+
+Or, you can provide a list of variables you do not want to select. 
+```{r, eval=FALSE}
+select(flights, -(year:day))
+```
+
+###3.3.2 Helper functions
+
+In addition, there are a number of helper functions you can use within select():
+
+For example: 
+starts_with("abc"): matches names that begin with “abc”.
+
+ends_with("xyz"): matches names that end with “xyz”.
+
+contains("ijk"): matches names that contain “ijk”.
+
+matches("(.)\\1"): selects variables that match a regular expression. (more details in book)
+
+###3.3.2 Rename
+A variant of the function select() is the function renamed(). It can be use to rename variables.Like this: 
+
+```{r, eval=FALSE}
+rename(flights, tail_num = tailnum)
+```
+
+By using select() in conjunction with everyting(), allows you to reorder your variables:  
+
+```{r, eval=FALSE}
+rename(flights, time_hour, air_time, everything())
+```
+
+###3.3.3 Practice Exercises
+
+\begin{enumerate}
+
+\item Brainstorm as many ways as possible to select dep_time, dep$\_$delay, arr$\_$time, and arr$\_$delay from flights.
+
+\item What happens if you include the name of a variable multiple times in a select() call?
+
+\item What does the one$\_$of() function do? Why might it be helpful in conjunction with this vector?
+
+vars$<-$ c("year", "month", "day", "dep$\_$delay", "arr$\_$delay")
+
+\item Does the result of running the following code surprise you? How do the select helpers deal with case by default? How can you change that default?
+
+```{r, eval=FALSE}
+select(flights, contains("TIME"))
+```
+
+\end{enumerate}
+
+##3.4 Mutate: Adding new variables
+
+mutate() allows you to create new variables as function of existing one. It will add new columns to the end of dataset. 
+
+```{r, eval=FALSE}
+flights<-mutate(flights, gain=dep_delay - arr_delay, speed=distance/air_time*60)
+
+View(flights)
+```
+
+###3.4.1 Practice Exercise
+(From the book)
+\begin{enumerate}
+\item Currently departure time and scheduled departure time are convenient to look at, but hard to compute with because they’re not really continuous numbers. Convert them to a more convenient representation of number of minutes since midnight.
+
+\item Compare air time with arrival time - departure time. What do you expect to see? What do you see? What do you need to do to fix it?
+
+\item Compare departure time, scheduled departured time, and departure delay. How would you expect those three numbers to be related?
+
+\end{enumerate}
+
+##3.5 Summarise
+
+This function collapses data to a single row. 
+
+```{r, eval=FALSE}
+summarise(flights, delay = mean(dep_delay, na.rm = TRUE))
+
+```
+
+summarise() is more useful if we combine it with group_by(). ``This changes the unit of analysis from the complete dataset to individual groups. Then, when you use the dplyr verbs on a grouped data frame they’ll be automatically applied “by group”. For example, if we applied exactly the same code to a data frame grouped by date, we get the average delay per date:''
+
+```{r, eval=FALSE}
+by_day <- group_by(flights, year, month, day)
+summarise(by_day, delay = mean(dep_delay, na.rm = TRUE))
+by_day
+```
+
+
+
+
+
+
